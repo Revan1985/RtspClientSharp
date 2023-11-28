@@ -2,11 +2,7 @@
 
 namespace RtspClientSharp.RawFrames.Video
 {
-    public class RawH264PFrame : RawH264Frame
+    public class RawH264PFrame(DateTime timestamp, ArraySegment<byte> frameSegment) : RawH264Frame(timestamp, frameSegment)
     {
-        public RawH264PFrame(DateTime timestamp, ArraySegment<byte> frameSegment) :
-            base(timestamp, frameSegment)
-        {
-        }
     }
 }

@@ -23,7 +23,7 @@ namespace RtspClientSharp.Rtcp
             _machineName = Environment.MachineName;
         }
 
-        public IEnumerable<RtcpPacket> GetReportPackets()
+        public IEnumerable<RtcpPacket> GetReportSdesPackets()
         {
             RtcpReceiverReportPacket receiverReport = CreateReceiverReport();
 
@@ -33,6 +33,18 @@ namespace RtspClientSharp.Rtcp
 
             yield return sdesReport;
         }
+
+        public IEnumerable<RtcpPacket> GetReportByePackets()
+        {
+            RtcpReceiverReportPacket receiverReport = CreateReceiverReport();
+
+            yield return receiverReport;
+
+            RtcpByePacket byeReport = new(_senderSyncSourceId);
+
+            yield return byeReport;
+        }
+
 
         private RtcpReceiverReportPacket CreateReceiverReport()
         {

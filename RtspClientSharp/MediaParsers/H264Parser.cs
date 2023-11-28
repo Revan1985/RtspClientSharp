@@ -9,7 +9,7 @@ using RtspClientSharp.Utils;
 
 namespace RtspClientSharp.MediaParsers
 {
-    class H264Parser
+    class H264Parser(Func<DateTime> frameTimestampProvider)
     {
         private enum FrameType
         {
@@ -18,26 +18,20 @@ namespace RtspClientSharp.MediaParsers
             PredictionFrame
         }
 
-        public static readonly ArraySegment<byte> StartMarkerSegment = new ArraySegment<byte>(RawH264Frame.StartMarker);
+        public static readonly ArraySegment<byte> StartMarkerSegment = new(RawH264Frame.StartMarker);
 
-        private readonly Func<DateTime> _frameTimestampProvider;
-        private readonly BitStreamReader _bitStreamReader = new BitStreamReader();
-        private readonly Dictionary<int, byte[]> _spsMap = new Dictionary<int, byte[]>();
-        private readonly Dictionary<int, byte[]> _ppsMap = new Dictionary<int, byte[]>();
+        private readonly Func<DateTime> _frameTimestampProvider = frameTimestampProvider ?? throw new ArgumentNullException(nameof(frameTimestampProvider));
+        private readonly BitStreamReader _bitStreamReader = new();
+        private readonly Dictionary<int, byte[]> _spsMap = [];
+        private readonly Dictionary<int, byte[]> _ppsMap = [];
         private bool _waitForIFrame = true;
         private byte[] _spsPpsBytes = new byte[0];
         private bool _updateSpsPpsBytes;
         private int _sliceType = -1;
 
-        private readonly MemoryStream _frameStream;
+        private readonly MemoryStream _frameStream = new(8 * 1024);
 
         public Action<RawFrame> FrameGenerated;
-
-        public H264Parser(Func<DateTime> frameTimestampProvider)
-        {
-            _frameTimestampProvider = frameTimestampProvider ?? throw new ArgumentNullException(nameof(frameTimestampProvider));
-            _frameStream = new MemoryStream(8 * 1024);
-        }
 
         public void Parse(ArraySegment<byte> byteSegment, bool generateFrame)
         {

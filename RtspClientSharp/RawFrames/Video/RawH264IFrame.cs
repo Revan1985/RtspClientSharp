@@ -1,15 +1,8 @@
 ﻿using System;
 
-namespace RtspClientSharp.RawFrames.Video
-{
-    public class RawH264IFrame : RawH264Frame
-    {
-        public ArraySegment<byte> SpsPpsSegment { get; }
+namespace RtspClientSharp.RawFrames.Video;
 
-        public RawH264IFrame(DateTime timestamp, ArraySegment<byte> frameSegment, ArraySegment<byte> spsPpsSegment)
-            : base(timestamp, frameSegment)
-        {
-            SpsPpsSegment = spsPpsSegment;
-        }
-    }
+public class RawH264IFrame(DateTime timestamp, ArraySegment<byte> frameSegment, ArraySegment<byte> spsPpsSegment) : RawH264Frame(timestamp, frameSegment)
+{
+    public ArraySegment<byte> SpsPpsSegment { get; } = spsPpsSegment;
 }

@@ -6,7 +6,10 @@ namespace SimpleRtspPlayer.RawFramesDecoding.FFmpeg
     enum FFmpegVideoCodecId
     {
         MJPEG = 7,
-        H264 = 27
+        MPEG4 = 12,
+        H264 = 27,
+        MXPEG = 145,
+        HVEC = 173,
     }
 
     [Flags]
@@ -22,8 +25,37 @@ namespace SimpleRtspPlayer.RawFramesDecoding.FFmpeg
     enum FFmpegPixelFormat
     {
         None = -1,
+        /// <summary>
+        /// planar YUV 4:2:0, 12bpp, (1 Cr & Cb sample per 2x2 Y samples)
+        /// </summary>
+        YUV420P = 0,
+        /// <summary>
+        /// packed YUV 4:2:2, 16bpp, Y0 Cb Y1 Cr
+        /// </summary>
+        YUYV422 = 1,
+        /// <summary>
+        /// packed RGB 8:8:8, 24bpp, RGBRGB...
+        /// </summary>
+        RGB24 = 2,
+        /// <summary>
+        /// packed RGB 8:8:8, 24bpp, BGRBGR...
+        /// </summary>
         BGR24 = 3,
+        /// <summary>
+        /// planar YUV 4:2:2, 16bpp, (1 Cr & Cb sample per 2x1 Y samples)
+        /// </summary>
+        YUV422P = 4,
+        /// <summary>
+        /// planar YUV 4:4:4, 24bpp, (1 Cr & Cb sample per 1x1 Y samples)
+        /// </summary>
+        YUV444P = 5,
+        /// <summary>
+        /// Y , 8bpp
+        /// </summary>
         GRAY8 = 8,
+        /// <summary>
+        /// packed BGRA 8:8:8:8, 32bpp, BGRABGRA...
+        /// </summary>
         BGRA = 28
     }
 

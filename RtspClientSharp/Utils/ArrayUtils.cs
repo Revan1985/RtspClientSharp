@@ -4,13 +4,15 @@
     {
         public static bool IsBytesEquals(byte[] bytes1, int offset1, int count1, byte[] bytes2, int offset2, int count2)
         {
-            if (count1 != count2)
-                return false;
+            if (count1 != count2) { return false; }
 
             for (int i = 0; i < count1; i++)
+            {
                 if (bytes1[offset1 + i] != bytes2[offset2 + i])
+                {
                     return false;
-
+                }
+            }
             return true;
         }
 
@@ -18,8 +20,7 @@
         {
             int patternLength = pattern.Length;
 
-            if (count < patternLength)
-                return false;
+            if (count < patternLength) { return false; }
 
             for (int i = 0; i < patternLength; i++, offset++)
                 if (array[offset] != pattern[i])
@@ -32,15 +33,17 @@
         {
             int patternLength = pattern.Length;
 
-            if (count < patternLength)
-                return false;
+            if (count < patternLength) { return false; }
 
             offset = offset + count - patternLength;
 
             for (int i = 0; i < patternLength; i++, offset++)
+            {
                 if (array[offset] != pattern[i])
+                {
                     return false;
-
+                }
+            }
             return true;
         }
 
@@ -48,8 +51,7 @@
         {
             int patternLength = pattern.Length;
 
-            if (count < patternLength)
-                return -1;
+            if (count < patternLength) { return -1; }
             
             int endIndex = startIndex + count;
 
@@ -57,9 +59,14 @@
             for (; startIndex < endIndex; startIndex++)
             {
                 if (array[startIndex] != pattern[foundIndex])
+                {
+                    startIndex -= foundIndex;
                     foundIndex = 0;
+                }
                 else if (++foundIndex == patternLength)
+                {
                     return startIndex - foundIndex + 1;
+                }
             }
 
             return -1;

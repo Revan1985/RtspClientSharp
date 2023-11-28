@@ -13,7 +13,7 @@ using RtspClientSharp.Utils;
 
 namespace RtspClientSharp.Rtsp
 {
-    class RtspHttpTransportClient : RtspTransportClient
+    class RtspHttpTransportClient(ConnectionParameters connectionParameters) : RtspTransportClient(connectionParameters)
     {
         private Socket _streamDataClient;
         private Socket _commandsClient;
@@ -22,14 +22,11 @@ namespace RtspClientSharp.Rtsp
         private Stream _dataNetworkStream;
         private uint _commandCounter;
         private EndPoint _remoteEndPoint = new IPEndPoint(IPAddress.None, 0);
+        private EndPoint _localEndPoint = new IPEndPoint(IPAddress.None, 0);
         private int _disposed;
 
         public override EndPoint RemoteEndPoint => _remoteEndPoint;
-
-        public RtspHttpTransportClient(ConnectionParameters connectionParameters)
-            : base(connectionParameters)
-        {
-        }
+        public override EndPoint LocalEndPoint => _localEndPoint;
 
         public override async Task ConnectAsync(CancellationToken token)
         {
@@ -45,6 +42,7 @@ namespace RtspClientSharp.Rtsp
             await _streamDataClient.ConnectAsync(connectionUri.Host, httpPort);
 
             _remoteEndPoint = _streamDataClient.RemoteEndPoint;
+            _localEndPoint = _streamDataClient.LocalEndPoint;
             _dataNetworkStream = new NetworkStream(_streamDataClient, false);
 
             string request = ComposeGetRequest();
@@ -68,7 +66,7 @@ namespace RtspClientSharp.Rtsp
             if (tokens.Length != 3)
                 throw new HttpRequestException("Invalid first response line");
 
-            HttpStatusCode statusCode = (HttpStatusCode) int.Parse(tokens[1]);
+            HttpStatusCode statusCode = (HttpStatusCode)int.Parse(tokens[1]);
 
             if (statusCode == HttpStatusCode.OK)
                 return;

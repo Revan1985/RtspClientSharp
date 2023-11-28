@@ -1,4 +1,6 @@
-﻿using System.Runtime.CompilerServices;
+﻿using System;
+using System.Runtime.CompilerServices;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace RtspClientSharp.Utils
@@ -16,6 +18,19 @@ namespace RtspClientSharp.Utils
         private static void HandleException(Task task)
         {
             var ignore = task.Exception;
+        }
+
+        public static async Task<T> WithCancellation<T>(this Task<T> task, CancellationToken cancellationToken)
+        {
+            TaskCompletionSource<bool> taskCompletionSource = new();
+            using (cancellationToken.Register(s => ((TaskCompletionSource<bool>)s).TrySetResult(true), taskCompletionSource))
+            {
+                if(task != await Task.WhenAny(task, taskCompletionSource.Task))
+                {
+                    throw new OperationCanceledException(cancellationToken);
+                }
+            }
+            return task.Result;
         }
     }
 }
